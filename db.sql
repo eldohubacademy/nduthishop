@@ -27,3 +27,32 @@ CREATE TABLE orders (
     total_price DECIMAL(10,2) NOT NULL CHECK (total_price >= 0),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+CREATE TABLE order_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity INT NOT NULL CHECK (quantity > 0),
+    price_at_purchase DECIMAL(10,2) NOT NULL CHECK (price_at_purchase >= 0),
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+)
+
+CREATE TABLE payments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    payment_method ENUM('Credit Card', 'PayPal', 'M-Pesa', 'Bank Transfer') NOT NULL,
+    payment_status ENUM('Paid', 'Pending', 'Failed') NOT NULL DEFAULT 'Pending',
+    transaction_id VARCHAR(255) UNIQUE,
+     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+) 
+CREATE TABLE reviews (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    product_id INT NOT NULL,
+    rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    comment TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+)
